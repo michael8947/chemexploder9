@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>30 שאלות מדעי החומר – כימיה עם טוויסט</title>
+  <!-- טעינה של TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5', /* סגול */
+            secondary: '#10B981' /* ירוק */
+          },
+          borderRadius: {
+            DEFAULT: '8px',
+            button: '8px'
+          },
+          fontFamily: {
+            sans: ['Arial', 'sans-serif'],
+            pacifico: ['"Pacifico"', 'cursive']
+          }
+        }
+      }
+    }
+  </script>
+  <!-- טעינת גופנים ואייקונים -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    /* עיצוב רקע לילה אמיתי */
+    body {
+      background-color: #1a202c;
+      color: #e2e8f0;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    /* התאמת גלילה */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #2d3748;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #4a5568;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- סרגל עליון עם גרדיאנט -->
+  <nav class="shadow-sm" style="background: linear-gradient(90deg, #4F46E5, #10B981);">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between h-16 items-center">
+        <!-- שם המשחק -->
+        <div class="text-2xl font-pacifico text-white">
+          ChemXploder
+        </div>
+        <!-- קישור חזרה למסך הבית -->
+        <a href="index.html" class="flex items-center gap-1 hover:underline text-white">
+          <span>חזרה למסך הבית</span>
+          <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- תוכן ראשי -->
+  <div class="container mx-auto p-6">
+    <h1 class="text-4xl font-bold text-center mb-8">30 שאלות מדעי החומר – כימיה עם טוויסט</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      <!-- שאלה 1 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(1)">
+        <p class="font-semibold">1. מהו אטום ומהם חלקיו העיקריים?</p>
+        <p id="answer-1" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: האטום הוא יחידת הבסיס של החומר – מורכב מפרוטונים, נייטרונים ואלקטרונים, כאילו כל חלקיק משחק תפקיד בסרט בלשי קטן.
+        </p>
+      </div>
+      <!-- שאלה 2 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(2)">
+        <p class="font-semibold">2. כיצד משפיע מספר הפרוטונים על זהות היסוד?</p>
+        <p id="answer-2" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: מספר הפרוטונים הוא ה"תעודה" הכימית – הוא מגדיר את היסוד, כאילו כל יסוד נושא את המספר הייחודי שלו כמו תעודת זהות שלא ניתן לזייף.
+        </p>
+      </div>
+      <!-- שאלה 3 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(3)">
+        <p class="font-semibold">3. מה ההבדל בין מולקולה לאטום?</p>
+        <p id="answer-3" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: מולקולה היא קבוצת אטומים שהתאגדה יחד, כמו צוות שעובד ביחד במסיבת פיגומים, בעוד אטום הוא ה"אבוד" שתמיד מבלה לבד.
+        </p>
+      </div>
+      <!-- שאלה 4 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(4)">
+        <p class="font-semibold">4. כיצד מסודרים היסודות בטבלת היסודות?</p>
+        <p id="answer-4" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: היסודות מסודרים לפי מספר הפרוטונים – כמו שורת המתנה במועדון לילה, רק שכל יסוד מתיימר להיות הסטאר של הערב.
+        </p>
+      </div>
+      <!-- שאלה 5 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(5)">
+        <p class="font-semibold">5. מהי תגובת חמצון-חיזור?</p>
+        <p id="answer-5" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: תגובת חמצון-חיזור היא חילוף מטענים בין חומרים – כמו חילופי דעות בוואטסאפ, רק עם פחות אימוג'ים ויותר ניסויים.
+        </p>
+      </div>
+      <!-- שאלה 6 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(6)">
+        <p class="font-semibold">6. מהו חוק שימור המסה?</p>
+        <p id="answer-6" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: חוק שימור המסה קובע שהמסה הכוללת של החומר נשארת קבועה – כמו כסף שחסר בחשבון הבנק, אבל בפועל תמיד מתייצב.
+        </p>
+      </div>
+      <!-- שאלה 7 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(7)">
+        <p class="font-semibold">7. מהם תרכובות יוניות וכיצד הן נוצרות?</p>
+        <p id="answer-7" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: תרכובות יוניות נוצרות כאשר אטומים מחליפים אלקטרונים – כאילו הם מחליפים הודעות טקסט בסודיות, רק עם יותר חשמל.
+        </p>
+      </div>
+      <!-- שאלה 8 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(8)">
+        <p class="font-semibold">8. מהי תערובת ומה ההבדל בינה לבין תרכובת?</p>
+        <p id="answer-8" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: תערובת היא ערבוב של חומרים שלא מתמזגים לחלוטין – כמו סלט עם רוטב, לעומת תרכובת שהיא תערובת מוקפדת ללא הפתעות.
+        </p>
+      </div>
+      <!-- שאלה 9 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(9)">
+        <p class="font-semibold">9. כיצד משפיעים תנאי הסביבה על תגובות כימיות?</p>
+        <p id="answer-9" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: טמפרטורה, לחץ וריכוז קובעים את מהירות התגובה – כמו מזג אוויר שמשתנה פתאום, מה שעלול להוביל להפתעות כימיות.
+        </p>
+      </div>
+      <!-- שאלה 10 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(10)">
+        <p class="font-semibold">10. מהי חשיבות אנרגיית הקשר במולקולות?</p>
+        <p id="answer-10" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: אנרגיית הקשר היא "עלות" השמירה על המולקולה ביחד – כמו חשבון חשמל מתמשך, רק שמפורש בכל נוסחה.
+        </p>
+      </div>
+      <!-- שאלה 11 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(11)">
+        <p class="font-semibold">11. איך נבדיל בין יסוד לתרכובת?</p>
+        <p id="answer-11" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: יסוד הוא חומר טהור, בעוד תרכובת היא שילוב של יסודות – כמו בורגר עם או בלי תוספות, כל אחד עם טעם משלו.
+        </p>
+      </div>
+      <!-- שאלה 12 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(12)">
+        <p class="font-semibold">12. מהי אלקטרוליזה של מים?</p>
+        <p id="answer-12" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: אלקטרוליזה מפרידה מים למימן ולחמצן – כמו לפצל קבוצת חברים לפי תפקידים, רק שהפיצול נעשה עם ניצוצי חשמל.
+        </p>
+      </div>
+      <!-- שאלה 13 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(13)">
+        <p class="font-semibold">13. מהו pH וכיצד הוא משפיע על תגובות?</p>
+        <p id="answer-13" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: pH מודד את רמת החומציות – כמו מדד למרירות קפה, ואם הוא משתולל, התגובה עלולה להיות מסעירה במיוחד.
+        </p>
+      </div>
+      <!-- שאלה 14 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(14)">
+        <p class="font-semibold">14. מה הם אינדקטורים כימיים?</p>
+        <p id="answer-14" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: אינדקטורים משנים את הצבע שלהם בהתאם לסביבה – כמו נורות שמתריעות כשמשהו לא מסתדר.
+        </p>
+      </div>
+      <!-- שאלה 15 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(15)">
+        <p class="font-semibold">15. כיצד משפיעים חומרים כימיים על התיישנות?</p>
+        <p id="answer-15" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: חומרים מסוימים יכולים להאיץ או לעכב את התיישנות – כמו תרופות שעושות ניסיונות לנצח, אך בסופו של דבר גם הם מתיישנים.
+        </p>
+      </div>
+      <!-- שאלה 16 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(16)">
+        <p class="font-semibold">16. מה ההבדל בין חומרים אורגניים לאי אורגניים?</p>
+        <p id="answer-16" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: חומרים אורגניים מכילים פחמן ונחשבים לחיים, ואי אורגניים הם כמו אורחים חולפים – זמניים ופשוט לא נמסים.
+        </p>
+      </div>
+      <!-- שאלה 17 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(17)">
+        <p class="font-semibold">17. מהם הגורמים המשפיעים על קצב תגובות כימיות?</p>
+        <p id="answer-17" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: טמפרטורה, לחץ וריכוז הם השחקנים שמכתיבים את מהירות התגובה – כאילו החומר משתנה במצב רוח מתחלף.
+        </p>
+      </div>
+      <!-- שאלה 18 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(18)">
+        <p class="font-semibold">18. מהי תרכובת אורגנית נפוצה ומה חשיבותה ביולוגית?</p>
+        <p id="answer-18" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: גלוקוז הוא מקור האנרגיה המרכזי – כמו מנת סוכר עילאית שמטעינה אותך להתחיל את היום.
+        </p>
+      </div>
+      <!-- שאלה 19 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(19)">
+        <p class="font-semibold">19. כיצד ניתן לזהות מצב חמצון בתרכובת?</p>
+        <p id="answer-19" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: מצב חמצון מתבטא במטענים של האטומים – כמו קוד סודי שמספר את סיפור הכוח שלהם.
+        </p>
+      </div>
+      <!-- שאלה 20 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(20)">
+        <p class="font-semibold">20. מה תפקידם של קטליזטורים?</p>
+        <p id="answer-20" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: קטליזטורים מזרזים תגובות כימיות בלי להשתנות – כמו מנהל שמניע את העובדים ללא הפסקת עבודה.
+        </p>
+      </div>
+      <!-- שאלה 21 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(21)">
+        <p class="font-semibold">21. מהם האתגרים בניהול פסולת כימית?</p>
+        <p id="answer-21" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: פסולת כימית, אם לא מטופלת כראוי, יכולה לגרום לכאוס – כמו אורח מתמיד שלא פורש, משאיר אחריו בלגן אמיתי.
+        </p>
+      </div>
+      <!-- שאלה 22 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(22)">
+        <p class="font-semibold">22. מהי חשיבות מחקר החומרים?</p>
+        <p id="answer-22" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: מחקר חומרים פותח פתרונות וטכנולוגיות חדשות – כאילו מצאנו את המפתח לעולם שבו הכל מסודר (או לפחות מנסה להיות).
+        </p>
+      </div>
+      <!-- שאלה 23 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(23)">
+        <p class="font-semibold">23. כיצד משפיעים חומרים כימיים על תהליכים ביולוגיים?</p>
+        <p id="answer-23" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: חומרים כימיים יכולים להאיץ או לעכב תהליכים ביולוגיים – כמו חבר שמערבב את השגרה וגורם להתרוצץ.
+        </p>
+      </div>
+      <!-- שאלה 24 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(24)">
+        <p class="font-semibold">24. מהי תרכובת פולימרית וכיצד נוצרת?</p>
+        <p id="answer-24" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: פולימרים נוצרים מיחידות חוזרות – כמו בדיחות שמופיעות שוב ושוב, עד שהן הופכות לסיפור קבוע.
+        </p>
+      </div>
+      <!-- שאלה 25 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(25)">
+        <p class="font-semibold">25. כיצד מגדירים "חומר" בהקשר כימי?</p>
+        <p id="answer-25" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: "חומר" הוא כל מה שקיים ומגיב – כמו כל המרכיבים בחיים, רק שמוסיפים להם נוסחאות להסבר.
+        </p>
+      </div>
+      <!-- שאלה 26 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(26)">
+        <p class="font-semibold">26. מהו תהליך מחזור חומרים?</p>
+        <p id="answer-26" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: מחזור חומרים הוא החזרת חומרים לשימוש חוזר – כמו לתת הזדמנות שנייה לבדיחה ישנה.
+        </p>
+      </div>
+      <!-- שאלה 27 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(27)">
+        <p class="font-semibold">27. כיצד משפיעים מזהמים כימיים על מערכות אקולוגיות?</p>
+        <p id="answer-27" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: מזהמים כימיים גורמים לנזק גדול בסביבה – כמו מסיבה שלא נגמרת שמשאירה אחריה כאוס של ממש.
+        </p>
+      </div>
+      <!-- שאלה 28 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(28)">
+        <p class="font-semibold">28. מהו ניתוח תהליכים כימיים?</p>
+        <p id="answer-28" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: ניתוח תהליכים כימיים הוא כמו לעבור טיפול נפשי – מנסים להבין את כל הבלגן ולמצוא את השורש לבעיה.
+        </p>
+      </div>
+      <!-- שאלה 29 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(29)">
+        <p class="font-semibold">29. מהם ההשלכות של ניסויים כימיים לא מבוקרים?</p>
+        <p id="answer-29" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: ניסויים לא מבוקרים עלולים לגרום לכאוס ופיצוצים – כמו לנסות משהו חדש בלי לבדוק את המציאות.
+        </p>
+      </div>
+      <!-- שאלה 30 -->
+      <div class="question-box border border-gray-600 p-4 rounded cursor-pointer hover:bg-gray-700 transition" onclick="toggleAnswer(30)">
+        <p class="font-semibold">30. כיצד ניתן לאזן בין יתרונות וחסרונות של חומרים בתעשייה?</p>
+        <p id="answer-30" class="mt-2 text-sm text-gray-400 hidden">
+          תשובה: האיזון מושג באמצעות ניתוח מעמיק – כמו לנסות לאזן בין אהבה לחיים, רק שהפעם עם נוסחאות שמנסות להביא סדר לבלגן.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleAnswer(id) {
+      const answer = document.getElementById('answer-' + id);
+      answer.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

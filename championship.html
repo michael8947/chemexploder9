@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מי יהיה האלוף? - ChemXploder</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',  /* סגול */
+            secondary: '#10B981' /* ירוק */
+          },
+          fontFamily: {
+            pacifico: ['"Pacifico"', 'cursive'],
+            heebo: ['Heebo', 'sans-serif']
+          },
+          borderRadius: {
+            DEFAULT: '8px',
+            button: '8px'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts + Remixicon -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- סרגל עליון עם גרדיאנט -->
+  <nav class="shadow-sm" style="background: linear-gradient(90deg, #4F46E5, #10B981);">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between h-16 items-center">
+        <!-- שם המשחק -->
+        <div class="text-2xl font-pacifico text-white">
+          ChemXploder
+        </div>
+        <!-- קישור חזרה למסך הבית -->
+        <a href="index.html" class="flex items-center gap-1 hover:underline text-white">
+          <span>חזרה למסך הבית</span>
+          <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- תוכן ראשי -->
+  <main class="max-w-3xl mx-auto px-4 py-8">
+    <!-- סטטוס המשחק -->
+    <div id="gameStatus" class="bg-gray-100 p-4 rounded-lg mb-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <i class="ri-timer-line text-primary mr-2"></i>
+        <span id="gameTimer" class="font-mono text-xl">30</span>
+      </div>
+      <div class="flex items-center">
+        <i class="ri-medal-line text-primary mr-2"></i>
+        <span id="gameScore" class="font-bold text-xl">0</span>
+      </div>
+    </div>
+
+    <!-- מיכל השאלות -->
+    <div id="questionContainer" class="bg-white p-6 rounded-lg shadow-md mb-4 text-center">
+      <h4 id="questionText" class="text-xl font-bold mb-4">מוכן להתחיל?</h4>
+      <div id="answerOptions" class="grid grid-cols-2 gap-4">
+        <button onclick="startGame()" class="rounded-button bg-primary text-white px-6 py-3 text-lg hover:bg-opacity-90 transition">
+          התחל משחק!
+        </button>
+      </div>
+    </div>
+
+    <!-- מידע על אתגר נוכחי -->
+    <div id="challengeInfo" class="bg-gray-100 p-4 rounded-lg mb-4">
+      <div class="flex items-center justify-between">
+        <span id="challengeProgress" class="text-sm text-gray-600">0/10 שאלות</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- סקריפט הלוגיקה של המשחק -->
+  <script>
+    const championshipGame = {
+      questions: [
+        {
+          question: "איזה יסוד מתפוצץ במגע עם מים?",
+          options: ["נתרן", "הליום", "זהב", "ברזל"],
+          correct: 0,
+          explanation: "נתרן מגיב בחריפות עם מים ומשחרר מימן שעלול להתפוצץ!"
+        },
+        {
+          question: "מהו האפס המוחלט?",
+          options: ["0°C", "-273.15°C", "-100°C", "-500°C"],
+          correct: 1,
+          explanation: "האפס המוחלט הוא -273.15°C – הקרה שאין לה אח ורע!"
+        },
+        {
+          question: "איזה גז משמש להעלאת בלונים?",
+          options: ["חמצן", "מימן", "הליום", "פחמן דו-חמצני"],
+          correct: 2,
+          explanation: "הליום הוא גז אציל קל, גורם לבלונים לרחף בלי להיכנס לבעיות."
+        },
+        {
+          question: "מה צבע הלהבה של נחושת?",
+          options: ["כחול", "אדום", "ירוק", "צהוב"],
+          correct: 2,
+          explanation: "כאשר נשרפת, נחושת יוצרת להבה ירוקה – פשוט מגניבה!"
+        },
+        {
+          question: "איזה חומר הוא הקשה ביותר בטבע?",
+          options: ["זהב", "יהלום", "ברזל", "טיטניום"],
+          correct: 1,
+          explanation: "יהלום הוא החומר הקשה ביותר – נוצץ אך גם בלתי ניתנים לשבירה."
+        },
+        {
+          question: "מהי התרכובת שנוצרת בין חמצן ומימן?",
+          options: ["H2O", "H2O2", "OH", "O2H"],
+          correct: 0,
+          explanation: "מים (H2O) הם תוצר ישיר של חמצן ומימן."
+        },
+        {
+          question: "איזה יסוד משמש בעיקר בייצור פלסטיק?",
+          options: ["פחמן", "נתרן", "חמצן", "ברזל"],
+          correct: 0,
+          explanation: "פחמן הוא הבסיס לאורגניים רבים, כולל הפלסטיקים."
+        },
+        {
+          question: "מהו הגז הנפוץ ביותר באטמוספירה?",
+          options: ["חמצן", "חנקן", "פחמן דו-חמצני", "ארגון"],
+          correct: 1,
+          explanation: "חנקן מהווה כ-78% מהאטמוספירה – פשוט האוויר סביבנו."
+        },
+        {
+          question: "איזה יסוד נמצא בשימוש נרחב לייצור סוללות?",
+          options: ["ליתיום", "זהב", "כסף", "ניקל"],
+          correct: 0,
+          explanation: "ליתיום הוא יסוד מרכזי בתעשיית הסוללות המודרניות."
+        },
+        {
+          question: "איזו תרכובת כימית משמשת כחומר ניקוי?",
+          options: ["NaCl", "NaOH", "CO2", "O3"],
+          correct: 1,
+          explanation: "NaOH הוא בסיס חזק, המשמש לניקוי ולפתיחת סתימות."
+        }
+      ],
+      currentQuestion: 0,
+      score: 0,
+      timeLeft: 30,
+      timer: null,
+      isPlaying: false
+    };
+
+    function startGame() {
+      championshipGame.isPlaying = true;
+      championshipGame.currentQuestion = 0;
+      championshipGame.score = 0;
+      championshipGame.timeLeft = 30;
+      updateUI();
+      showQuestion();
+      startTimer();
+    }
+
+    function startTimer() {
+      if (championshipGame.timer) clearInterval(championshipGame.timer);
+      championshipGame.timer = setInterval(() => {
+        championshipGame.timeLeft--;
+        updateUI();
+        if (championshipGame.timeLeft <= 0) endGame();
+      }, 1000);
+    }
+
+    function showQuestion() {
+      const q = championshipGame.questions[championshipGame.currentQuestion];
+      document.getElementById('questionText').textContent = q.question;
+      const optionsHtml = q.options.map((opt, i) => `
+        <button onclick="checkAnswer(${i})" class="rounded-button bg-white border-2 border-primary text-primary px-4 py-2 hover:bg-primary hover:text-white transition">
+          ${opt}
+        </button>
+      `).join('');
+      document.getElementById('answerOptions').innerHTML = optionsHtml;
+      document.getElementById('challengeProgress').textContent = 
+        `${championshipGame.currentQuestion + 1}/${championshipGame.questions.length} שאלות`;
+    }
+
+    function checkAnswer(selectedIndex) {
+      const q = championshipGame.questions[championshipGame.currentQuestion];
+      const correct = selectedIndex === q.correct;
+      if (correct) {
+        championshipGame.score += 100;
+        showFeedback(true, q.explanation);
+      } else {
+        showFeedback(false, q.explanation);
+      }
+      championshipGame.currentQuestion++;
+      if (championshipGame.currentQuestion >= championshipGame.questions.length) {
+        setTimeout(endGame, 2000);
+      } else {
+        setTimeout(showQuestion, 2000);
+      }
+      updateUI();
+    }
+
+    function showFeedback(correct, explanation) {
+      const feedbackDiv = document.createElement('div');
+      feedbackDiv.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-xl z-50 text-center border-4 ${correct ? 'border-green-500' : 'border-red-500'}`;
+      feedbackDiv.innerHTML = `
+        <i class="ri-${correct ? 'checkbox-circle' : 'close-circle'}-line text-4xl ${correct ? 'text-green-500' : 'text-red-500'}"></i>
+        <p class="text-xl font-bold mt-2">${correct ? 'נכון, אלוף!' : 'לא נכון, נסה שוב!'}</p>
+        <p class="mt-2">${explanation}</p>
+      `;
+      document.body.appendChild(feedbackDiv);
+      setTimeout(() => feedbackDiv.remove(), 2000);
+    }
+
+    function endGame() {
+      clearInterval(championshipGame.timer);
+      championshipGame.isPlaying = false;
+      document.getElementById('questionContainer').innerHTML = `
+        <div class="text-center">
+          <i class="ri-trophy-line text-6xl text-yellow-500 mb-4"></i>
+          <h3 class="text-2xl font-bold mb-2">המשחק נגמר!</h3>
+          <p class="text-xl mb-4">הניקוד שלך: ${championshipGame.score}</p>
+          <button onclick="startGame()" class="rounded-button bg-primary text-white px-6 py-3 text-lg hover:bg-opacity-90 transition">שחק שוב</button>
+        </div>
+      `;
+    }
+
+    function updateUI() {
+      document.getElementById('gameTimer').textContent = championshipGame.timeLeft;
+      document.getElementById('gameScore').textContent = championshipGame.score;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => startGame());
+  </script>
+</body>
+</html>

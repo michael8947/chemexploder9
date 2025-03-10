@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>אלכימאי הטבלה המחזורית - ChemXploder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4F46E5",
+              secondary: "#10B981",
+              darkBg: "#1F2937",
+              lightBg: "#F3F4F6",
+            },
+            fontFamily: {
+              pacifico: ['"Pacifico"', "cursive"],
+              heebo: ["Heebo", "sans-serif"],
+            },
+            borderRadius: {
+              button: "8px",
+            },
+            animation: {
+              fadeIn: "fadeIn 0.5s ease-out",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+      body {
+        font-family: "Heebo", sans-serif;
+        background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+      }
+      /* Spinner - כי גם ניסויים זקוקים למעגלי חשמל משלהם */
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid #e5e7eb;
+        border-top: 6px solid #4F46E5;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      /* Modal עם אנימציית fadeIn – קצת קסם לדיאלוגים */
+      .modal {
+        display: none;
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      /* אפקט על כרטיסי היסודות: קצת תנועה לעולם הקפוא */
+      .element-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .element-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      }
+      /* ניוואציה עם רקע גראדיאנט – כי גם השורות המנהליות צריכות להרגיש חגיגיות */
+      nav {
+        background: linear-gradient(90deg, #4F46E5, #10B981);
+      }
+      nav a,
+      nav .text-primary {
+        color: #fff !important;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- מסך טעינה – כי אפילו ניסויים זקוקים לטעינה לפני הפיצוץ -->
+    <div class="loading-overlay fixed inset-0 bg-white flex items-center justify-center z-50">
+      <div class="spinner"></div>
+    </div>
+    <!-- סרגל ניווט -->
+    <nav class="shadow-sm">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center gap-4">
+            <a
+              href="https://readdy.ai/home/af488a9c-845c-4a2e-9c74-05e4aca0c9eb/8e87f69d-0369-4a24-9f6d-b929ed8fb603"
+              data-readdy="true"
+              class="flex items-center gap-2 hover:underline"
+            >
+            <a href="index.html" class="flex items-center gap-2 hover:underline">
+              <i class="ri-arrow-right-line"></i>
+              <span>חזרה למשחקים</span>
+            </a>
+            
+            <div class="text-2xl font-pacifico">
+              ChemXploder
+            </div>
+          </div>
+          <div class="flex items-center">
+            <div
+              class="bg-white bg-opacity-30 rounded-full px-4 py-2 flex items-center gap-2"
+            >
+              <i class="ri-trophy-line text-yellow-500"></i>
+              <span class="font-semibold" id="score">0</span>
+              <span>נקודות</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- תוכן ראשי -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold">אלכימאי הטבלה המחזורית</h1>
+          <div class="flex gap-4">
+            <button
+              id="pauseBtn"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200"
+            >
+              <i class="ri-pause-line"></i>
+            </button>
+            <button
+              id="resetBtn"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200"
+            >
+              <i class="ri-refresh-line"></i>
+            </button>
+            <button
+              id="helpBtn"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200"
+            >
+              <i class="ri-question-line"></i>
+            </button>
+          </div>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+          <div
+            id="progressBar"
+            class="bg-primary h-2 rounded-full"
+            style="width: 0%"
+          ></div>
+        </div>
+        <div class="game-grid grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4" id="gameArea">
+          <!-- כרטיסי יסודות עם עיצוב מעודכן -->
+          <div class="element-card bg-blue-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">1</span>
+            <span class="text-2xl font-bold">H</span>
+            <span class="text-sm">מימן</span>
+          </div>
+          <div class="element-card bg-green-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">2</span>
+            <span class="text-2xl font-bold">O</span>
+            <span class="text-sm">חמצן</span>
+          </div>
+          <div class="element-card bg-purple-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">3</span>
+            <span class="text-2xl font-bold">Na</span>
+            <span class="text-sm">נתרן</span>
+          </div>
+          <div class="element-card bg-yellow-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">4</span>
+            <span class="text-2xl font-bold">Cl</span>
+            <span class="text-sm">כלור</span>
+          </div>
+          <div class="element-card bg-red-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">5</span>
+            <span class="text-2xl font-bold">K</span>
+            <span class="text-sm">אשלגן</span>
+          </div>
+          <div class="element-card bg-blue-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">6</span>
+            <span class="text-2xl font-bold">Br</span>
+            <span class="text-sm">ברום</span>
+          </div>
+          <div class="element-card bg-green-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">7</span>
+            <span class="text-2xl font-bold">Mg</span>
+            <span class="text-sm">מגנזיום</span>
+          </div>
+          <div class="element-card bg-purple-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">8</span>
+            <span class="text-2xl font-bold">Ca</span>
+            <span class="text-sm">סידן</span>
+          </div>
+          <div class="element-card bg-yellow-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">9</span>
+            <span class="text-2xl font-bold">C</span>
+            <span class="text-sm">פחמן</span>
+          </div>
+          <div class="element-card bg-red-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">10</span>
+            <span class="text-2xl font-bold">Fe</span>
+            <span class="text-sm">ברזל</span>
+          </div>
+          <div class="element-card bg-blue-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">11</span>
+            <span class="text-2xl font-bold">Si</span>
+            <span class="text-sm">צורן</span>
+          </div>
+          <div class="element-card bg-green-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">12</span>
+            <span class="text-2xl font-bold">S</span>
+            <span class="text-sm">גופרית</span>
+          </div>
+          <div class="element-card bg-purple-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">13</span>
+            <span class="text-2xl font-bold">N</span>
+            <span class="text-sm">חנקן</span>
+          </div>
+          <div class="element-card bg-yellow-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">14</span>
+            <span class="text-2xl font-bold">OH</span>
+            <span class="text-sm">הידרוקסיל</span>
+          </div>
+          <div class="element-card bg-red-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">15</span>
+            <span class="text-2xl font-bold">Al</span>
+            <span class="text-sm">אלומיניום</span>
+          </div>
+          <div class="element-card bg-blue-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">16</span>
+            <span class="text-2xl font-bold">H₂</span>
+            <span class="text-sm">מימן דו-אטומי</span>
+          </div>
+          <div class="element-card bg-green-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">17</span>
+            <span class="text-2xl font-bold">O₂</span>
+            <span class="text-sm">חמצן דו-אטומי</span>
+          </div>
+          <div class="element-card bg-purple-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">18</span>
+            <span class="text-2xl font-bold">H₂O</span>
+            <span class="text-sm">מים</span>
+          </div>
+          <div class="element-card bg-yellow-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">19</span>
+            <span class="text-2xl font-bold">Fe₂O₃</span>
+            <span class="text-sm">תחמוצת ברזל</span>
+          </div>
+          <div class="element-card bg-red-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">20</span>
+            <span class="text-2xl font-bold">H₄</span>
+            <span class="text-sm">מימן טטרה-אטומי</span>
+          </div>
+          <div class="element-card bg-blue-100 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer">
+            <span class="text-sm text-gray-600">21</span>
+            <span class="text-2xl font-bold">H₃</span>
+            <span class="text-sm">מימן תלת-אטומי</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">הוראות משחק</h2>
+          <ul class="space-y-2 text-gray-600">
+            <li class="flex items-center gap-2">
+              <i class="ri-checkbox-circle-line text-primary"></i>
+              <span>בחר שני יסודות כדי ליצור תרכובת</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="ri-checkbox-circle-line text-primary"></i>
+              <span>רק חיבורים הגיוניים יעבדו! נסה ליצור תרכובות אמיתיות</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="ri-checkbox-circle-line text-primary"></i>
+              <span>צבור נקודות עבור כל תרכובת נכונה</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="ri-checkbox-circle-line text-primary"></i>
+              <span>השלם את כל התרכובות כדי לעבור שלב</span>
+            </li>
+            <li class="flex items-center gap-2 mt-4 text-sm text-gray-500">
+              <i class="ri-lightbulb-line"></i>
+              <span>טיפ: נסה ליצור תרכובות מוכרות כמו מלח בישול (NaCl) או מים (H₂O)</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">הישגים</h2>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span>שיא אישי</span>
+              <span class="font-bold">1,250</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>דירוג עולמי</span>
+              <span class="text-primary font-bold">#42</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>תרכובות שהושלמו</span>
+              <span class="font-bold">15/20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- חלון עזרה עם קריצה: כאן הקסם קורה (וגם קצת אלכימיה של מילים) -->
+    <div id="helpModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold">עזרה</h3>
+          <button class="text-gray-400 hover:text-gray-600" onclick="closeModal('helpModal')">
+            <i class="ri-close-line text-2xl"></i>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <p>ברוכים הבאים למשחק אלכימאי הטבלה המחזורית! אם חשבתם שהכימיה היא רק בשביל שיכורים מהמפץ, טעות ענקית.</p>
+          <p>בחרו שני יסודות, צרו תרכובת והרוויחו נקודות – כי גם כשאין לכם כימיה במוח, אפשר לצבור ניצחונות!</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      let selectedElements = [];
+      // רשימת תרכובות תקינות (53 תרכובות) – כי לא כל שילוב מניב פיצוץ, גם אם אתם מנסים
+      const validCombinations = {
+        "NaCl": ["Na", "Cl"],
+        "KBr": ["K", "Br"],
+        "MgO": ["Mg", "O"],
+        "CaCl2": ["Ca", "Cl"],
+        "CO2": ["C", "O"],
+        "H2O": ["H", "O"],
+        "Fe2O3": ["Fe", "O"],
+        "SiO2": ["Si", "O"],
+        "HCl": ["H", "Cl"],
+        "H2S": ["H", "S"],
+        "NaOH": ["Na", "OH"],
+        "KOH": ["K", "OH"],
+        "CH4": ["C", "H"],
+        "NH3": ["N", "H"],
+        "FeC": ["Fe", "C"],
+        "H2O2": ["H₂", "O₂"],
+        "CaO": ["Ca", "O"],
+        "KCl": ["K", "Cl"],
+        "Na2O": ["Na", "O"],
+        "Al2O3": ["Al", "O"],
+        "HBr": ["H", "Br"],
+        "FeS": ["Fe", "S"],
+        "AlCl3": ["Al", "Cl"],
+        "NaBr": ["Na", "Br"],
+        "K2O": ["K", "O"],
+        "MgCl2": ["Mg", "Cl"],
+        "CCl4": ["C", "Cl"],
+        "CS2": ["C", "S"],
+        "NCl": ["N", "Cl"],
+        "NO": ["N", "O"],
+        "OHCl": ["OH", "Cl"],
+        "BrO": ["Br", "O"],
+        "NaS": ["Na", "S"],
+        "KS": ["K", "S"],
+        "MgS": ["Mg", "S"],
+        "FeN": ["Fe", "N"],
+        "SiS": ["Si", "S"],
+        "AlS": ["Al", "S"],
+        "HAl": ["H", "Al"],
+        "HSi": ["H", "Si"],
+        "ClSi": ["Cl", "Si"],
+        "NS": ["N", "S"],
+        "OHFe": ["OH", "Fe"],
+        "FeCl": ["Fe", "Cl"],
+        "CaS": ["Ca", "S"],
+        "AlN": ["Al", "N"],
+        "SiN": ["Si", "N"],
+        "BrCl": ["Br", "Cl"],
+        "KH": ["K", "H"],
+        "NaH": ["Na", "H"],
+        "MgN": ["Mg", "N"],
+        "CaN": ["Ca", "N"],
+        "OHSi": ["OH", "Si"]
+      };
+
+      function handleElementClick(element) {
+        if (selectedElements.length < 2 && !element.classList.contains("selected")) {
+          element.classList.add("selected", "ring-2", "ring-primary");
+          selectedElements.push(element);
+          if (selectedElements.length === 2) {
+            setTimeout(checkCombination, 500);
+          }
+        }
+      }
+
+      function getCompoundMessage(compound) {
+        const messages = {
+          NaCl: "בקיצור, מלח בישול. אולי תכין לי צ'יפס?",
+          KBr: "ברום-אשלגן. לא טעים.",
+          MgO: "מגנזיה. טוב לצרבת.",
+          CaCl2: "סופח לחות, לא נשמה.",
+          CO2: "פחמן דו-חמצני. תנשום פחות.",
+          H2O: "מים. תשתה, זה עוזר.",
+          Fe2O3: "חלודה. הורס לך את האופניים.",
+          SiO2: "זכוכית. לא לנסות לנגוס.",
+          HCl: "חומצת מלח. אוכל הכל, חוץ ממני.",
+          H2S: "מסריח כמו ביצה רקובה.",
+          NaOH: "פותח סתימות. גם במוח?",
+          KOH: "משמש בסבונים.",
+          CH4: "מתאן. זהירות, גז פציץ.",
+          NH3: "אמוניה. מסריח בטירוף.",
+          FeC: "פלדה. ברזל בלי פחמן? בכיין.",
+          H2O2: "מים עם בום בדרך.",
+          CaO: "תחמוצת סידן. לא בשביל לשתות.",
+          KCl: "מלח קהילתי, פשוט וטעים.",
+          Na2O: "נתרן וחמצן. לא מתאים לשתייה.",
+          Al2O3: "תחמוצת אלומיניום. לא מסיכה את השיער.",
+          HBr: "חומצה עם ברום, לא לבליעה.",
+          FeS: "ברזל עם גופרית. לא משדר קסם.",
+          AlCl3: "אלומיניום כלורי, לא למתוק.",
+          NaBr: "נתרן עם ברום. גם הוא לא תענוג.",
+          K2O: "תחמוצת אשלגן, לא טוב לאף אחד.",
+          MgCl2: "מגנזיום כלורי. לא להגזים.",
+          CCl4: "תרכובת מולקולרית, לא לשתייה.",
+          CS2: "פחמן עם גופרית. ניחוח לא נעים.",
+          NCl: "ניטרוגלור, נסה שוב.",
+          NO: "חמצן עם חנקן. מסובך.",
+          OHCl: "הידרוקסיל עם כלור. לא בשביל הילדים.",
+          BrO: "ברום עם חמצן, חצוף כמו שאתה.",
+          NaS: "נתרן עם גופרית, לא לבלוע.",
+          KS: "אשלגן עם גופרית, פשוט לא.",
+          MgS: "מגנזיום עם גופרית. תנסה שוב.",
+          FeN: "ברזל עם חנקן. לא תפסיק לצעוק.",
+          SiS: "צורן עם גופרית. אל תנסה לזה.",
+          AlS: "אלומיניום עם גופרית. גם הוא כושל.",
+          HAl: "חמצן עם אלומיניום? מה זה, ניסוי?",
+          HSi: "חמצן עם צורן. יותר טוב לא.",
+          ClSi: "כלור עם צורן. לא מסתדר.",
+          NS: "חנקן עם גופרית. ניסיון כושל.",
+          OHFe: "הידרוקסיל עם ברזל. לא מומלץ.",
+          FeCl: "ברזל עם כלור. פשוט חם.",
+          CaS: "סידן עם גופרית. לא בטעים.",
+          AlN: "אלומיניום עם חנקן. נסה שוב.",
+          SiN: "צורן עם חנקן. לא מסתדר.",
+          BrCl: "ברום עם כלור. פשוט לא.",
+          KH: "אשלגן עם מימן. חומציה?",
+          NaH: "נתרן עם מימן. מסוכן מדי.",
+          MgN: "מגנזיום עם חנקן. לא יציב.",
+          CaN: "סידן עם חנקן. נסה אחר כך.",
+          OHSi: "הידרוקסיל עם צורן. מה זה בכלל?"
+        };
+        return messages[compound]
+          ? `<p class="text-gray-600 mt-2">${messages[compound]}</p>`
+          : "";
+      }
+
+      function checkCombination() {
+        const element1 = selectedElements[0].querySelector(".text-2xl").textContent;
+        const element2 = selectedElements[1].querySelector(".text-2xl").textContent;
+        let isValidCombination = false;
+        let resultingCompound = "";
+        for (let [compound, elements] of Object.entries(validCombinations)) {
+          if (elements.includes(element1) && elements.includes(element2)) {
+            isValidCombination = true;
+            resultingCompound = compound;
+            break;
+          }
+        }
+        const reactionModal = document.createElement("div");
+        reactionModal.className = "fixed inset-0 flex items-center justify-center z-50";
+        reactionModal.innerHTML = `
+          <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 relative">
+            <div class="text-center">
+              ${
+                isValidCombination
+                  ? `<i class="ri-emotion-laugh-line text-5xl text-green-500 mb-4"></i>
+                     <h3 class="text-xl font-bold mb-2">כל הכבוד!</h3>
+                     <p>יצרת ${resultingCompound}!</p>
+                     ${getCompoundMessage(resultingCompound)}`
+                  : `<i class="ri-emotion-sad-line text-5xl text-red-500 mb-4"></i>
+                     <h3 class="text-xl font-bold mb-2">לא בדיוק...</h3>
+                     <p>לא, גאון, ${element1} ו-${element2} לא הופכים אותך לממציא תרכובת קסומה.</p>`
+              }
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+              <i class="ri-close-line text-xl"></i>
+            </button>
+          </div>
+        `;
+        document.body.appendChild(reactionModal);
+        if (isValidCombination) {
+          let score = parseInt(document.getElementById("score").textContent);
+          score += 100;
+          document.getElementById("score").textContent = score;
+          let progress = parseInt(document.getElementById("progressBar").style.width) || 0;
+          progress = Math.min(progress + 10, 100);
+          document.getElementById("progressBar").style.width = progress + "%";
+          new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRA0PVqzn77BdGAg+ltryxnMpBSl+zPLaizsIGGS57OihUBELTKXh8bllHgU2jdXzzn0vBSF1xe/glEILElyx6OyrWBUIQ5zd8sFuJAUuhM/z1YU2Bhxqvu7mnEYODlOq5O+zYBoGPJPY88p2KwUme8rx3I4+CRZiturqpVITC0mi4PK8aB8GM4nU8tGAMQYfcsLu45ZFDBFZr+ftrVoXCECY3PLEcSYELIHO8diJOQcZaLvt559NEAxPqOPwtmMcBjiP1/PMeS0GI3fH8N2RQAoUXrTp66hVFApGnt/yvmwhBTCG0fPTgjQGHW/A7eSaRQ0PVqzl77BeGQc9ltvyxnUoBSh+zPDaizsIGGS56+mjTxELTKXh8bllHgU1jdT0z3wvBSJ1xe/glEILElyx6OyrWRUIRJve8sFuJAUug8/y1oU2Bhxqvu3mnEYODlOq5O+zYRsGPJPY88p3KgUme8rx3I4+CRVht+rqpVMSC0mh4PK8aiAFM4nU8tGAMQYfccPu45ZFDBFZr+ftrVwWCECY3PLEcSYGK4DN8tiIOQcZZ7zs56BODwxPpuPxtmQdBTiP1/PMeS0GI3bH8d+RQQkUXrTp66hWEwlGnt/yv2wiBDCG0fPTgzQHHG/A7eSaSw0PVqzl77BeGQc9ltrzxnUoBSh9y/HajDsIF2W56+mjUREKTKPi8blnHwQ1jdTy0H4wBSF0xe/glEQKElux5+2sWBUJQ5vd88FwJAUtg8/y1oY3BRxqvu3mnEgNDVKp5e+zYRsGOpPY88p3KgUmecnw3Y8+CBVht+rqpVMSC0mh4PK8aiAFMojS89GBMgUfccLv45dGCxFYrujtrlwWCECX2/PEcycFK4DN8tiKOQcYZ7zs56BODwxPpuPxtmQdBTiP1/PMeS0GI3bH8d+RQQkUXrTp66hWEwlGnt/yv2wiBDCG0fPTgzQHHG3A7eSaSw0PVqzl77BeGQc9ldrzxnUoBSh9y/HajDwIF2S56+mjUREKTKPi8blnHwQ1jdTy0H4wBSF0xe/glEQKElux5+2sWBUJQ5vd88FwJAUtg8/y1oY3BRxqvu3mnEgNDVKp5e+zYRsGOpPY88p3KgUmecnw3Y8+CBVht+rqpVMSC0mh4PK8aiAFMojS89GBMgUfccLv45dGCxFYrujtrlwWCECX2/PEcycFKw==").play();
+        } else {
+          new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRA0PVqzn77BdGAg+ltryxnMpBSl+zPLaizsIGGS57OihUBELTKXh8bllHgU2jdXzzn0vBSF1xe/glEILElyx6OyrWBUIQ5zd8sFuJAUuhM/z1YU2Bhxqvu7mnEYODlOq5O+zYBoGPJPY88p2KwUme8rx3I4+CRZiturqpVITC0mi4PK8aB8GM4nU8tGAMQYfcsLu45ZFDBFZr+ftrVoXCECY3PLEcSYELIHO8diJOQcZaLvt559NEAxPqOPwtmMcBjiP1/PMeS0GI3fH8N2RQAoUXrTp66hVFApGnt/yvmwhBTCG0fPTgjQGHW/A7eSaRQ0PVqzl77BeGQc9ltvyxnUoBSh+zPDaizsIGGS56+mjTxELTKXh8bllHgU1jdT0z3wvBSJ1xe/glEILElyx6OyrWRUIRJve8sFuJAUug8/y1oU2Bhxqvu3mnEYODlOq5O+zYRsGPJPY88p3KgUme8rx3I4+CRVht+rqpVMSC0mh4PK8aiAFM4nU8tGAMQYfccPu45ZFDBFZr+ftrVwWCECY3PLEcSYGK4DN8tiIOQcZZ7zs56BODwxPpuPxtmQdBTiP1/PMeS0GI3bH8d+RQQkUXrTp66hWEwlGnt/yv2wiBDCG0fPTgzQHHG/A7eSaSw0PVqzl77BeGQc9ltrzxnUoBSh9y/HajDsIF2W56+mjUREKTKPi8blnHwQ1jdTy0H4wBSF0xe/glEQKElux5+2sWBUJQ5vd88FwJAUtg8/y1oY3BRxqvu3mnEgNDVKp5e+zYRsGOpPY88p3KgUmecnw3Y8+CBVht+rqpVMSC0mh4PK8aiAFMojS89GBMgUfccLv45dGCxFYrujtrlwWCECX2/PEcycFK4DN8tiKOQcYZ7zs56BODwxPpuPxtmQdBTiP1/PMeS0GI3bH8d+RQQkUXrTp66hWEwlGnt/yv2wiBDCG0fPTgzQHHG3A7eSaSw0PVqzl77BeGQc9ldrzxnUoBSh9y/HajDwIF2S56+mjUREKTKPi8blnHwQ1jdTy0H4wBSF0xe/glEQKElux5+2sWBUJQ5vd88FwJAUtg8/y1oY3BRxqvu3mnEgNDVKp5e+zYRsGOpPY88p3KgUmecnw3Y8+CBVht+rqpVMSC0mh4PK8aiAFMojS89GBMgUfccLv45dGCxFYrujtrlwWCECX2/PEcycFKw==").play();
+        }
+        selectedElements.forEach((el) => {
+          el.classList.remove("selected", "ring-2", "ring-primary");
+        });
+        selectedElements = [];
+      }
+      
+      function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+      }
+      
+      window.onload = function () {
+        setTimeout(() => {
+          document.querySelector(".loading-overlay").style.opacity = "0";
+          setTimeout(() => {
+            document.querySelector(".loading-overlay").style.display = "none";
+          }, 500);
+        }, 1500);
+        document.querySelectorAll(".element-card").forEach((card) => {
+          card.addEventListener("click", () => handleElementClick(card));
+        });
+        document.getElementById("helpBtn").addEventListener("click", () => {
+          document.getElementById("helpModal").style.display = "block";
+        });
+        document.getElementById("pauseBtn").addEventListener("click", () => {
+          isPaused = !isPaused;
+          document.getElementById("pauseBtn").innerHTML = isPaused
+            ? '<i class="ri-play-line"></i>'
+            : '<i class="ri-pause-line"></i>';
+        });
+        document.getElementById("resetBtn").addEventListener("click", () => {
+          document.getElementById("score").textContent = "0";
+          document.getElementById("progressBar").style.width = "0%";
+        });
+        window.onclick = function (event) {
+          if (event.target.classList.contains("modal")) {
+            event.target.style.display = "none";
+          }
+        };
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>קרב התרכובות - ChemXploder</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',
+            secondary: '#10B981'
+          },
+          fontFamily: {
+            pacifico: ['"Pacifico"', 'cursive'],
+            heebo: ['Heebo', 'sans-serif']
+          },
+          borderRadius: {
+            DEFAULT: '8px',
+            button: '8px'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts + Remixicon -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* רקע עדין לכל הדף */
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- סרגל עליון בעיצוב גרדיאנט (סגול -> ירוק) -->
+  <nav class="shadow-sm" style="background: linear-gradient(90deg, #4F46E5, #10B981);">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between h-16 items-center">
+        <!-- כותרת המשחק -->
+        <div class="text-2xl font-pacifico text-white">
+          ChemXploder
+        </div>
+        <!-- קישור למשחקים -->
+        <a href="index.html" class="flex items-center gap-1 hover:underline text-white">
+          <span>חזרה למשחקים</span>
+          <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- תוכן ראשי -->
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center mb-4">קרב התרכובות</h1>
+    <p class="mb-6 text-center text-gray-700">
+      בחר את התרכובת היציבה יותר – נחש איזו תשרוד יותר!
+    </p>
+
+    <!-- כפתורי בחירה (ייווצרו דינמית) -->
+    <div id="battleOptions" class="flex justify-around gap-4 mb-4"></div>
+
+    <!-- תצוגת תוצאה -->
+    <div id="battleFeedback" class="hidden text-center p-4 bg-white rounded-lg shadow"></div>
+
+    <!-- כפתור ליצירת קרב חדש -->
+    <button
+      onclick="startBattle()"
+      class="w-full bg-primary text-white py-3 mt-4 rounded-button hover:bg-opacity-90 transition"
+    >
+      קרב חדש
+    </button>
+  </main>
+
+  <!-- סקריפט הלוגיקה -->
+  <script>
+    const battleCompounds = [
+      "H2O", "NaCl", "CH4", "CO2", "NH₃", "Fe2O3", "Al2O3", "SiO2",
+      "NaOH", "KOH", "HNO3", "Na2CO3", "CaCO3", "NaHCO3", "KNO3"
+    ];
+    // ככל שהמספר גדול יותר - התרכובת יציבה יותר
+    const compoundStability = {
+      "H2O": 80,
+      "NaCl": 70,
+      "CH4": 60,
+      "CO2": 65,
+      "NH₃": 55,
+      "Fe2O3": 50,
+      "Al2O3": 75,
+      "SiO2": 85,
+      "NaOH": 40,
+      "KOH": 45,
+      "HNO3": 35,
+      "Na2CO3": 60,
+      "CaCO3": 65,
+      "NaHCO3": 50,
+      "KNO3": 55
+    };
+
+    // בוחר 2 תרכובות אקראיות ומציג אותן
+    function startBattle() {
+      const battleOptions = document.getElementById('battleOptions');
+      const battleFeedback = document.getElementById('battleFeedback');
+      battleFeedback.classList.add('hidden');
+
+      // בחירת 2 תרכובות שונות אקראיות
+      let comp1 = battleCompounds[Math.floor(Math.random() * battleCompounds.length)];
+      let comp2;
+      do {
+        comp2 = battleCompounds[Math.floor(Math.random() * battleCompounds.length)];
+      } while (comp2 === comp1);
+
+      // מייצר כפתורי בחירה לשתי התרכובות
+      battleOptions.innerHTML = `
+        <button
+          class="bg-secondary text-white py-3 px-6 rounded-button hover:bg-opacity-90 transition"
+          onclick="checkBattle('${comp1}','${comp2}', '${comp1}')">
+          ${comp1}
+        </button>
+        <button
+          class="bg-secondary text-white py-3 px-6 rounded-button hover:bg-opacity-90 transition"
+          onclick="checkBattle('${comp1}','${comp2}', '${comp2}')">
+          ${comp2}
+        </button>
+      `;
+    }
+
+    // בודק איזו תרכובת יציבה יותר ומשווה לבחירה של המשתמש
+    function checkBattle(comp1, comp2, chosen) {
+      const battleFeedback = document.getElementById('battleFeedback');
+      let winner = compoundStability[comp1] >= compoundStability[comp2] ? comp1 : comp2;
+      let message = "";
+
+      if (chosen === winner) {
+        message = `🔥 כל הכבוד! ${winner} יציבה יותר.`;
+      } else {
+        message = `💥 טעית! ${winner} יציבה יותר מ-${chosen}.`;
+      }
+
+      battleFeedback.innerHTML = `<p class="text-xl font-bold text-gray-700">${message}</p>`;
+      battleFeedback.classList.remove('hidden');
+    }
+
+    // מתחילים בקרב ראשון כשהדף נטען
+    document.addEventListener('DOMContentLoaded', startBattle);
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemExploder</title>
+
+  <!-- Google Fonts + Remixicon -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- טעינה של TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- הגדרת Tailwind – מוגדר אחרי טעינת הספרייה -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',  /* סגול כהה */
+            secondary: '#10B981' /* ירוק חי */
+          },
+          fontFamily: {
+            pacifico: ['"Pacifico"', 'cursive'],
+            heebo: ['Heebo', 'sans-serif']
+          },
+          borderRadius: {
+            DEFAULT: '8px',
+            button: '8px'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    /* עיצוב הכפתור של 30 שאלות ותשובות */
+    .question-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(90deg, #4F46E5, #10B981);
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 15px 25px;
+      border-radius: 12px;
+      transition: 0.3s ease-in-out;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .question-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(90deg, #10B981, #4F46E5);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- סרגל עליון בעיצוב גרדיאנט (סגול -> ירוק) -->
+  <nav class="shadow-sm" style="background: linear-gradient(90deg, #4F46E5, #10B981);">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-center h-16 items-center">
+        <div class="text-2xl font-pacifico text-white">
+          ChemExploder
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- תוכן ראשי -->
+  <main class="max-w-7xl mx-auto my-10 px-6">
+    <header class="text-center mb-8">
+      <h2 class="text-4xl font-extrabold text-primary">ברוכים הבאים לעולם הכימי</h2>
+      <p class="text-gray-600 mt-2">לחצו על כל קישור, ותנו לכימיה לקחת אתכם למסע בלתי צפוי!</p>
+    </header>
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a href="in.html" class="bg-white shadow rounded overflow-hidden hover:shadow-lg transition">
+        <img src="360_F_1070577132_oxpyZjeeZoQb0VPLa1XQLVZa7xlWstcw.jpg" alt="אלכימאי" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-primary">אלכימאי הטבלה המחזורית</h3>
+          <p class="text-gray-500 mt-1">לחבר יסודות וליצור קסמים כימיים</p>
+        </div>
+      </a>
+      <a href="lab.html" class="bg-white shadow rounded overflow-hidden hover:shadow-lg transition">
+        <img src="הורדה.jpeg" alt="מעבדה" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-primary">מעבדת הניסויים</h3>
+          <p class="text-gray-500 mt-1">ערבבו, ניסו, ותתפלאו מהתגובות</p>
+        </div>
+      </a>
+      <a href="battle.html" class="bg-white shadow rounded overflow-hidden hover:shadow-lg transition">
+        <img src="war-conflict-landscape-with-soldiers-fighting_23-2149766327.avif" alt="קרב תרכובות" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-primary">קרב התרכובות</h3>
+          <p class="text-gray-500 mt-1">תראו מי החזק – תנו לתרכובות להילחם!</p>
+        </div>
+      </a>
+      <a href="mystery.html" class="bg-white shadow rounded overflow-hidden hover:shadow-lg transition">
+        <img src="65b1fc2cefaa1-delhi-police-uses-ai-to-solve-murder-mystery-251402600-16x9.avif" alt="תעלומת האטום" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-primary">תעלומת האטום האבוד</h3>
+          <p class="text-gray-500 mt-1">10 חידות, ואתם בכימיה בחידה אמיתית</p>
+        </div>
+      </a>
+      <a href="championship.html" class="bg-white shadow rounded overflow-hidden hover:shadow-lg transition">
+        <img src="הורדה (1).jpeg" alt="מי יהיה האלוף?" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h3 class="text-xl font-semibold text-primary">⚡ מי יהיה האלוף?</h3>
+          <p class="text-gray-500 mt-1">10 שאלות, הרבה חכמה, וקצת מזל</p>
+        </div>
+      </a>
+    </section>
+
+    <!-- קישור 30 שאלות ותשובות -->
+    <div class="flex justify-center mt-10">
+      <a href="bot.html" class="question-button">
+        📚 30 שאלות ותשובות 🔥
+      </a>
+    </div>
+
+  </main>
+  
+  <footer class="bg-white py-6">
+    <div class="container mx-auto text-center">
+    </div>
+  </footer>
+
+  <script>
+    // מסך טעינה - נעלם אחרי שניה
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loadingScreen');
+        if (loader) {
+          loader.classList.add('opacity-0', 'pointer-events-none');
+          loader.style.transition = 'opacity 0.5s ease';
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 500);
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
